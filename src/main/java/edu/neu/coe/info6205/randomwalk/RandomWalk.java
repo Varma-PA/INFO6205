@@ -19,9 +19,11 @@ public class RandomWalk {
      * @param dx the distance he moves in the x direction
      * @param dy the distance he moves in the y direction
      */
-    private void move(int dx, int dy) {
+        private void move(int dx, int dy) {
         // FIXME do move by replacing the following code
-         throw new RuntimeException("Not implemented");
+//         throw new RuntimeException("Not implemented");
+        this.x += dx;
+        this.y += dy;
         // END 
     }
 
@@ -32,6 +34,9 @@ public class RandomWalk {
      */
     private void randomWalk(int m) {
         // FIXME
+        for(int i = 0; i < m ; i++){
+            randomMove();
+        }
         // END 
     }
 
@@ -52,8 +57,10 @@ public class RandomWalk {
      */
     public double distance() {
         // FIXME
+        double theDistance = 0;
+        theDistance = Math.sqrt(this.x*this.x + this.y*this.y);
+        return theDistance;
         // END
-        return 0;
     }
 
     /**
