@@ -30,7 +30,6 @@ public class InsertionSortBasic {
     public static void main(String[] args) {
         InsertionSortBasic sorter = new InsertionSortBasic();
         System.out.println(Arrays.toString(args));
-        sorter.sort(args);
         System.out.println(Arrays.toString(args));
     }
 }
