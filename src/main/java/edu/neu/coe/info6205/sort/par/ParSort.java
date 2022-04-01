@@ -1,7 +1,12 @@
 package edu.neu.coe.info6205.sort.par;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * This code has been fleshed out by Ziyao Qiao. Thanks very much.
@@ -9,10 +14,16 @@ import java.util.concurrent.CompletableFuture;
  */
 class ParSort {
 
+    public static int threadCount = 1;
+
+    static ForkJoinPool forkJoinPool = new ForkJoinPool(threadCount);
+
     public static int cutoff = 1000;
 
     public static void sort(int[] array, int from, int to) {
-        if (to - from < cutoff) Arrays.sort(array, from, to);
+//        if (to - from < config.get("-cutoff")) Arrays.sort(array, from, to);
+        if(to - from < cutoff) Arrays.sort(array, from, to);
+
         else {
             // FIXME next few lines should be removed from public repo.
             CompletableFuture<int[]> parsort1 = parsort(array, from, from + (to - from) / 2); // TO IMPLEMENT
@@ -20,6 +31,7 @@ class ParSort {
             CompletableFuture<int[]> parsort = parsort1.thenCombine(parsort2, (xs1, xs2) -> {
                 int[] result = new int[xs1.length + xs2.length];
                 // TO IMPLEMENT
+
                 int i = 0;
                 int j = 0;
                 for (int k = 0; k < result.length; k++) {
@@ -37,12 +49,14 @@ class ParSort {
             });
 
             parsort.whenComplete((result, throwable) -> System.arraycopy(result, 0, array, from, result.length));
-//            System.out.println("# threads: "+ ForkJoinPool.commonPool().getRunningThreadCount());
+//            System.out.println("# threads: "+ forkJoinPool.commonPool().getRunningThreadCount());
+
             parsort.join();
         }
     }
 
     private static CompletableFuture<int[]> parsort(int[] array, int from, int to) {
+
         return CompletableFuture.supplyAsync(
                 () -> {
                     int[] result = new int[to - from];
@@ -50,7 +64,7 @@ class ParSort {
                     System.arraycopy(array, from, result, 0, result.length);
                     sort(result, 0, to - from);
                     return result;
-                }
+                }, forkJoinPool
         );
     }
 }
